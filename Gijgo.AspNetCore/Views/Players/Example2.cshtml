@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "jQuery Grid Inline Editing";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12">
+            <table id="grid"></table>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var grid, countries;
+            grid = $('#grid').grid({
+                dataSource: '/Players/GetPlayers',
+                uiLibrary: 'bootstrap4',
+                primaryKey: 'id',
+                inlineEditing: { mode: 'command' },
+                columns: [
+                    { field: 'id', width: 44 },
+                    { field: 'name', editor: true },
+                    { field: 'countryName', title: 'Nationality', type: 'dropdown', editField: 'countryID', editor: { dataSource: '/Locations/GetCountries', valueField: 'id' } },
+                    { field: 'dateOfBirth', type: 'date', format: 'yyyy-mm-dd', editor: true },
+                    { field: 'isActive', title: 'Active?', type: 'checkbox', editor: true, width: 90, align: 'center' }
+                ],
+                pager: { limit: 5 }
+            });
+            grid.on('rowDataChanged', function (e, id, record) {
+                // Clone the record in new object where you can format the data to format that is supported by the backend.
+                var data = $.extend(true, {}, record);
+                // Format the date to format that is supported by the backend.
+                data.dateOfBirth = gj.core.parseDate(record.dateOfBirth, 'yyyy-mm-dd').toISOString();
+                // Post the data to the server
+                $.ajax({ url: '/Players/Save', data: { record: data }, method: 'POST' })
+                    .fail(function () {
+                        alert('Failed to save.');
+                    });
+            });
+            grid.on('rowRemoving', function (e, $row, id, record) {
+                if (confirm('Are you sure?')) {
+                    $.ajax({ url: '/Players/Delete', data: { Id: id }, method: 'POST' })
+                        .done(function () {
+                            grid.reload();
+                        })
+                        .fail(function () {
+                            alert('Failed to delete.');
+                        });
+                }
+            });
+        });
+    </script>
+}

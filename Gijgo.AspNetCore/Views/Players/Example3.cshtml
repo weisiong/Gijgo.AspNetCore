@@ -1,0 +1,42 @@
+﻿
+@{
+    ViewData["Title"] = "Nested jQuery Grids";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12">
+            <table id="grid"></table>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var grid = $('#grid').grid({
+                primaryKey: 'ID',
+                dataSource: '/Players/GetPlayers',
+                columns: [
+                    { field: 'id', width: 56 },
+                    { field: 'name' },
+                    { field: 'placeOfBirth', title: 'Place Of Birth' }
+                ],
+                detailTemplate: '<div><table/></div>'
+            });
+            grid.on('detailExpand', function (e, $detailWrapper, id) {
+                $detailWrapper.find('table').grid({
+                    params: { playerId: id },
+                    dataSource: '/Players/GetTeams',
+                    autoGenerateColumns: true,
+                    pager: { limit: 5 }
+                });
+            });
+            grid.on('detailCollapse', function (e, $detailWrapper, id) {
+                $detailWrapper.find('table').grid('destroy', true, true);
+            });
+        });
+    </script>
+
+}

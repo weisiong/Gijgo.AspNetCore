@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.168
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gijgo.AspNetCore", "Gijgo.AspNetCore\Gijgo.AspNetCore.csproj", "{F08800F1-706D-4E81-B64A-965FE7E407C0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F08800F1-706D-4E81-B64A-965FE7E407C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F08800F1-706D-4E81-B64A-965FE7E407C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F08800F1-706D-4E81-B64A-965FE7E407C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F08800F1-706D-4E81-B64A-965FE7E407C0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D0B3C49B-DABE-4243-B1C3-111581A355A6}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,18 @@
+{
+  "defaultProvider": "cdnjs",
+  "defaultDestination": "wwwroot/lib",
+  "libraries": [
+    {
+      "library": "gijgo@1.9.11",
+      "destination": "wwwroot/lib/gijgo",
+      "files": [
+        "combined/css/gijgo.css",
+        "combined/js/gijgo.js",
+        "combined/fonts/gijgo-material.ttf",
+        "modular/css/grid.css",
+        "modular/js/grid.js"
+      ]
+    }
+  ],
+  "version": "1.0"
+}

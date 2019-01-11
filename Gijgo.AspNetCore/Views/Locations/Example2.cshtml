@@ -1,0 +1,31 @@
+﻿
+@{
+    ViewData["Title"] = "TreeView Drag And Drop";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div id="tree"></div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var tree = $('#tree').tree({
+                primaryKey: 'id',
+                dataSource: '/Locations/Get',
+                dragAndDrop: true
+            });
+            tree.on('nodeDrop', function (e, id, parentId, orderNumber) {
+                var params = { id: id, parentId: parentId, orderNumber: orderNumber };
+                $.ajax({ url: '/Locations/ChangeNodePosition', data: params, method: 'POST' })
+                    .fail(function () {
+                        alert('Failed to save.');
+                    });
+            });
+        });
+    </script>
+
+}

@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Hello, world!</h1>
+    <h2>The time on the server is @DateTime.Now</h2>
+</div>
+
+
+<h2>Grid</h2>
+<ul>
+    <li><a asp-controller="Players" asp-action="Example1">Ajax Sourced Data</a></li>
+    <li><a asp-controller="Players" asp-action="Example2">Inline Editing</a></li>
+    <li><a asp-controller="Players" asp-action="Example3">Nested Grids</a></li>
+    <li><a asp-controller="Players" asp-action="Example4">Connected Grids</a></li>
+    <li><a asp-controller="Players" asp-action="Example5">Grouping</a></li>
+</ul>
+
+<h2>Tree</h2>
+<ul>
+    <li><a asp-controller="Locations" asp-action="Example1">Checkboxes</a></li>
+    <li><a asp-controller="Locations" asp-action="Example2">Drag And Drop</a></li>
+    <li><a asp-controller="Locations" asp-action="Example3">Lazy Loading</a></li>
+    @*<li><a href="~/examples/tree/bootstrap-treeview-checkbox.html" target="_blank">Checkboxes</a></li>
+    <li><a href="~/examples/tree/treeview-drag-and-drop.html" target="_blank">Drag And Drop</a></li>
+    <li><a href="~/examples/tree/treeview-lazy-loading.html" target="_blank">Lazy Loading</a></li>*@
+</ul>

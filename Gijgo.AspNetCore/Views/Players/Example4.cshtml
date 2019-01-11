@@ -1,0 +1,42 @@
+﻿
+@{
+    ViewData["Title"] = "Connected jQuery Grids";
+}
+
+<div class="">
+    <table id="grid1" data-primary-key="ID"></table>
+    <br /><br />
+    <table id="grid2"></table>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var grid1, grid2;
+            grid1 = $('#grid1').grid({
+                primaryKey: 'ID',
+                dataSource: '/Players/GetPlayers',
+                columns: [{ field: 'id', width: 65 }, { field: 'name' }, { field: 'placeOfBirth' }],
+                pager: { limit: 5 }
+            });
+            grid2 = $('#grid2').grid({
+                primaryKey: 'ID',
+                dataSource: '/Players/GetTeams',
+                autoLoad: false,
+                columns: [
+                    { title: 'Years', tmpl: '{fromYear} - {toYear}', width: 140 },
+                    { field: 'team' },
+                    { field: 'apps', width: 90 },
+                    { field: 'goals', width: 90 }
+                ],
+                pager: { limit: 5 }
+            });
+            grid1.on('rowSelect', function (e, $row, id, record) {
+                grid2.reload({ playerId: id, page: 1 });
+            });
+        });
+    </script>
+
+
+}

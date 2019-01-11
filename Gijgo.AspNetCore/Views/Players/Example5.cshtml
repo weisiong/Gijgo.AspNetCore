@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewData["Title"] = "Nested jQuery Grids";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12">
+            <table id="grid"></table>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var grid = $('#grid').grid({
+                primaryKey: 'ID',
+                dataSource: '/Players/GetPlayersGrouping',
+                grouping: { groupBy: 'countryName' },
+                columns: [{ field: 'id', width: 56 }, { field: 'name' }, { field: 'placeOfBirth' }]
+            });
+        });
+    </script>
+
+
+}

@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <UserSecretsId>be4a6824-071c-4fe8-ab41-78c516fba0ab</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\PlayerTeamsController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\Home\Privacy.cshtml" />
+    <Content Remove="Views\Locations\Create.cshtml" />
+    <Content Remove="Views\Locations\Delete.cshtml" />
+    <Content Remove="Views\Locations\Details.cshtml" />
+    <Content Remove="Views\Locations\Edit.cshtml" />
+    <Content Remove="Views\Locations\Index.cshtml" />
+    <Content Remove="Views\Players\Create.cshtml" />
+    <Content Remove="Views\Players\Delete.cshtml" />
+    <Content Remove="Views\Players\Details.cshtml" />
+    <Content Remove="Views\Players\Edit.cshtml" />
+    <Content Remove="Views\Players\Index.cshtml" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Gijgo" Version="1.9.11" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.0" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Data\" />
+  </ItemGroup>
+
+</Project>
