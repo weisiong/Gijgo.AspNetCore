@@ -11,16 +11,138 @@
     </div>
 </div>
 
+
+<div id="dialog" class="gj-display-none">
+    <div data-role="body">
+        <input type="hidden" id="ID" />
+        <div class="form-row">
+            <input type="text" class="gj-textbox-md" id="name" placeholder="Name...">
+        </div>
+        <div class="form-row">
+            <select id="nationality" width="100%" placeholder="Nationality..."></select>
+        </div>
+        <div class="form-row">
+            <input type="text" id="dateOfBirth" placeholder="Date Of Birth..." width="100%" />
+        </div>
+        <div class="form-row">
+            <label for="IsActive"><input type="checkbox" id="isActive" /> &nbsp;Is Active?</label>
+        </div>
+    </div>
+    <div data-role="footer">
+        <button type="button" id="btnSave" class="gj-button-md">Save</button>
+        <button type="button" id="btnCancel" class="gj-button-md">Cancel</button>
+    </div>
+</div>
+
 @section Scripts
     {
+    <style>
+        .form-row {
+            display: flex;
+            margin-bottom: 29px;
+        }
+
+            .form-row:last-child {
+                margin-bottom: 0px;
+            }
+
+        .margin-top-10 {
+            margin-top: 10px;
+        }
+
+        .float-left {
+            float: left;
+        }
+
+        .float-right {
+            float: right;
+        }
+
+        .display-inline {
+            display: inline;
+        }
+
+        .display-inline-block {
+            display: inline-block;
+        }
+
+        .width-200 {
+            width: 200px;
+        }
+
+        .clear-both {
+            clear: both;
+        }
+    </style>
+
     <script type="text/javascript">
+        var grid, dialog, nationalityDropdown, dateOfBirth, isActiveCheckbox;
+        function Edit(e) {
+            $('#ID').val(e.data.id);
+            $('#name').val(e.data.record.name);
+            nationalityDropdown.value(e.data.record.countryID);
+            dateOfBirth.value(e.data.record.dateOfBirth);
+            isActiveCheckbox.state(e.data.record.isActive ? 'checked' : 'unchecked');
+            dialog.open('Edit Player');
+        }
+        function Save() {
+            var record = {
+                ID: $('#ID').val(),
+                Name: $('#name').val(),
+                CountryID: nationalityDropdown.value(),
+                DateOfBirth: gj.core.parseDate(dateOfBirth.value(), 'yyyy-mm-dd').toISOString(),
+                IsActive: $('#isActive').prop('checked')
+            };
+            $.ajax({ url: '/Players/Save', data: { record: record }, method: 'POST' })
+                .done(function () {
+                    dialog.close();
+                    grid.reload();
+                })
+                .fail(function () {
+                    alert('Failed to save.');
+                    dialog.close();
+                });
+        }
+        function Delete(e) {
+            if (confirm('Are you sure?')) {
+                $.ajax({ url: '/Players/Delete', data: { Id: e.data.id }, method: 'POST' })
+                    .done(function () {
+                        grid.reload();
+                    })
+                    .fail(function () {
+                        alert('Failed to delete.');
+                    });
+            }
+        }
+
         $(document).ready(function () {
             var grid = $('#grid').grid({
                 primaryKey: 'ID',
                 dataSource: '/Players/GetPlayersGrouping',
                 grouping: { groupBy: 'countryName' },
-                columns: [{ field: 'id', width: 56 }, { field: 'name' }, { field: 'placeOfBirth' }]
+                columns: [
+                    { field: 'id', width: 56 },
+                    { field: 'name' },
+                    { field: 'placeOfBirth' },
+                    { width: 64, tmpl: '<span class="material-icons gj-cursor-pointer">edit</span>', align: 'center', events: { 'click': Edit } },
+                    { width: 64, tmpl: '<span class="material-icons gj-cursor-pointer">delete</span>', align: 'center', events: { 'click': Delete } }
+                ],
+                pager: { limit: 5 }
             });
+
+            dialog = $('#dialog').dialog({
+                uiLibrary: 'bootstrap4',
+                autoOpen: false,
+                resizable: false,
+                modal: true,
+                width: 360
+            });
+
+            nationalityDropdown = $('#nationality').dropdown({ dataSource: '/Locations/GetCountries', valueField: 'id' });
+            dateOfBirth = $('#dateOfBirth').datepicker({ format: 'yyyy-mm-dd' });
+            isActiveCheckbox = $('#isActive').checkbox();
+            isActiveCheckbox.closest('label').removeClass('gj-checkbox-md gj-checkbox-material-icons');
+
         });
     </script>
 

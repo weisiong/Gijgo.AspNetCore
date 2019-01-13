@@ -1,0 +1,42 @@
+﻿@model Gijgo.Asp.NET.Examples.Models.Entities.Location 
+
+<div>
+    <h4>Location</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-md-4">
+            @Html.DisplayNameFor(model => model.ID)
+        </dt>
+        <dd class="col-md-7">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-md-4">
+            @Html.DisplayNameFor(model => model.Checked)
+        </dt>
+        <dd class="col-md-7">
+            @Html.DisplayFor(model => model.Checked)
+        </dd>
+        <dt class="col-md-4">
+            @Html.DisplayNameFor(model => model.OrderNumber)
+        </dt>
+        <dd class="col-md-7">
+            @Html.DisplayFor(model => model.OrderNumber)
+        </dd>
+        <dt class="col-md-4">
+            @Html.DisplayNameFor(model => model.Population)
+        </dt>
+        <dd class="col-md-7">
+            @Html.DisplayFor(model => model.Population)
+        </dd>
+        <dt class="col-md-4">
+            @Html.DisplayNameFor(model => model.FlagUrl)
+        </dt>
+        <dd class="col-md-7">
+            @Html.DisplayFor(model => model.FlagUrl)
+        </dd>
+    </dl>
+</div>
+<div>
+
+    <a asp-action="Index">Back to List</a>
+</div>

@@ -34,6 +34,10 @@ namespace Gijgo.AspNetCore.Controllers
             return View();
         }
 
+        public IActionResult Example4()
+        {
+            return View();
+        }
 
 
         public JsonResult GetCountries(string query)

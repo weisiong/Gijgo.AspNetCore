@@ -23,6 +23,7 @@
                     { field: 'name' },
                     { field: 'placeOfBirth', title: 'Place Of Birth' }
                 ],
+                pager: { limit: 5 },
                 detailTemplate: '<div><table/></div>'
             });
             grid.on('detailExpand', function (e, $detailWrapper, id) {

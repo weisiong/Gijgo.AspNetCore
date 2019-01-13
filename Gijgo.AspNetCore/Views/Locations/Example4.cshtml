@@ -1,0 +1,85 @@
+﻿@{
+    ViewData["Title"] = "Bootstrap TreeView Master Detail";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4">
+            <div id="tree"></div>
+        </div>
+        <div class="col-md-8">
+            <div id="detail"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <style>
+        .row {
+            margin: 10px;
+        }
+    </style>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var tree = $('#tree').tree({
+                primaryKey: 'id',
+                uiLibrary: 'bootstrap4',
+                dataSource: '/Players/GetPlayersGroupByCountry',
+                checkboxes: false,
+                cascadeSelection: false,
+                selectionType: 'single'
+            });
+
+            tree.on('expand', function (e, $node, id) {
+                var i, children, record = tree.getDataById(id);
+                if (tree.getChildren($node).length === 0) {
+                    if (record.type === 'country') {
+                        $.ajax({
+                            url: '/Players/GetPlayersBy?CountryId=' + id,
+                            type: 'GET',
+                            cache: false,
+                            success: function (children) {
+                                for (i = 0; i < children.length; i++) {
+                                    tree.addNode(children[i], $node);
+                                }                               
+                            }
+                        });
+                       // console.log('expand type:' + record.type + ', val:' + record.text + ', id:' + id);
+                    }
+                }
+            });
+
+            tree.on('select', function (e, $node, id) {
+                var i, children, record = tree.getDataById(id);              
+                if (record.type === 'country') {
+                    $.ajax({
+                        url: '/Players/CountryDetail?CountryId=' + record.id,
+                        type: 'GET',
+                        cache: false,
+                        success: function (result) {
+                            console.log(result);
+                            $("#detail").html(result);
+                        }
+                    });
+                }
+                else if (record.type === 'player') {                      
+                    $.ajax({
+                        url: '/Players/PlayerDetail?PlayerId=' + record.playerId,
+                        type: 'GET',
+                        cache: false,
+                        success: function (result) {
+                            console.log(result);
+                            $("#detail").html(result);
+                        }
+                    });
+                }                
+               // console.log('select type:' + record.type + ', val:' + record.text + ', id:' + id);
+            });
+
+        });
+
+    </script>
+
+}

@@ -2,8 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Gijgo.Asp.NET.Examples.Models.Entities;
 using Gijgo.Asp.NetCore.Data;
+using Gijgo.AspNetCore.Binders;
+using Gijgo.AspNetCore.Models.DTO;
 
 namespace Gijgo.AspNetCore.Controllers
 {
@@ -35,7 +36,7 @@ namespace Gijgo.AspNetCore.Controllers
             return _context.Players.Any(e => e.ID == id);
         }
         
-        public JsonResult GetPlayers(int? page, int? limit, string sortBy, string direction, string name, string nationality, string placeOfBirth)
+        public JsonResult GetPlayers([ModelBinder(typeof(GetPlayersDtoBinder))] GetPlayersDto vm)
         {
             List<Asp.NetCore.Models.DTO.Player> records;
             int total;
@@ -51,27 +52,27 @@ namespace Gijgo.AspNetCore.Controllers
                 IsActive = p.IsActive,
                 OrderNumber = p.OrderNumber
             });
-
-            if (!string.IsNullOrWhiteSpace(name))
+            
+            if (!string.IsNullOrWhiteSpace(vm.name))
             {
-                query = query.Where(q => q.Name.Contains(name));
+                query = query.Where(q => q.Name.Contains(vm.name));
             }
 
-            if (!string.IsNullOrWhiteSpace(nationality))
+            if (!string.IsNullOrWhiteSpace(vm.nationality))
             {
-                query = query.Where(q => q.CountryName != null && q.CountryName.Contains(nationality));
+                query = query.Where(q => q.CountryName != null && q.CountryName.Contains(vm.nationality));
             }
 
-            if (!string.IsNullOrWhiteSpace(placeOfBirth))
+            if (!string.IsNullOrWhiteSpace(vm.placeOfBirth))
             {
-                query = query.Where(q => q.PlaceOfBirth != null && q.PlaceOfBirth.Contains(placeOfBirth));
+                query = query.Where(q => q.PlaceOfBirth != null && q.PlaceOfBirth.Contains(vm.placeOfBirth));
             }
 
-            if (!string.IsNullOrEmpty(sortBy) && !string.IsNullOrEmpty(direction))
+            if (!string.IsNullOrEmpty(vm.sortBy) && !string.IsNullOrEmpty(vm.direction))
             {
-                if (direction.Trim().ToLower() == "asc")
+                if (vm.direction.Trim().ToLower() == "asc")
                 {
-                    switch (sortBy.Trim().ToLower())
+                    switch (vm.sortBy.Trim().ToLower())
                     {
                         case "name":
                             query = query.OrderBy(q => q.Name);
@@ -89,7 +90,7 @@ namespace Gijgo.AspNetCore.Controllers
                 }
                 else
                 {
-                    switch (sortBy.Trim().ToLower())
+                    switch (vm.sortBy.Trim().ToLower())
                     {
                         case "name":
                             query = query.OrderByDescending(q => q.Name);
@@ -112,10 +113,10 @@ namespace Gijgo.AspNetCore.Controllers
             }
 
             total = query.Count();
-            if (page.HasValue && limit.HasValue)
+            if (vm.page.HasValue && vm.limit.HasValue)
             {
-                int start = (page.Value - 1) * limit.Value;
-                records = query.Skip(start).Take(limit.Value).ToList();
+                int start = (vm.page.Value - 1) * vm.limit.Value;
+                records = query.Skip(start).Take(vm.limit.Value).ToList();
             }
             else
             {
@@ -128,7 +129,7 @@ namespace Gijgo.AspNetCore.Controllers
         [HttpPost]
         public JsonResult Save(Asp.NetCore.Models.DTO.Player record)
         {
-            Player entity;
+            Asp.NET.Examples.Models.Entities.Player entity;
 
             if (record.ID > 0)
             {
@@ -141,7 +142,7 @@ namespace Gijgo.AspNetCore.Controllers
             }
             else
             {
-                _context.Players.Add(new Player
+                _context.Players.Add(new Asp.NET.Examples.Models.Entities.Player
                 {
                     Name = record.Name,
                     PlaceOfBirth = record.PlaceOfBirth,
@@ -160,25 +161,21 @@ namespace Gijgo.AspNetCore.Controllers
             return View();
         }
 
-        #region "bootstrap-grid-inline-edit"
-        // GET: Players
         public IActionResult Example2()
         {          
             return View();
         }
-        #endregion
-
-        #region "nested-jquery-grids"
+ 
         public IActionResult Example3()
         {
             return View();
         }
         
-        public JsonResult GetTeams(int playerId, int? page, int? limit)
+        public JsonResult GetTeams([ModelBinder(typeof(GetTeamsDtoBinder))] GetTeamsDto vm)
         {
             List<Asp.NetCore.Models.DTO.PlayerTeam> records;
             
-            var query = _context.PlayerTeams.Where(pt => pt.PlayerID == playerId).Select(pt => new Asp.NetCore.Models.DTO.PlayerTeam
+            var query = _context.PlayerTeams.Where(pt => pt.PlayerID == vm.playerId).Select(pt => new Asp.NetCore.Models.DTO.PlayerTeam
             {
                 ID = pt.ID,
                 PlayerID = pt.PlayerID,
@@ -190,10 +187,10 @@ namespace Gijgo.AspNetCore.Controllers
             });
 
             int total = query.Count();
-            if (page.HasValue && limit.HasValue)
+            if (vm.page.HasValue && vm.limit.HasValue)
             {
-                int start = (page.Value - 1) * limit.Value;
-                records = query.OrderBy(pt => pt.FromYear).Skip(start).Take(limit.Value).ToList();
+                int start = (vm.page.Value - 1) * vm.limit.Value;
+                records = query.OrderBy(pt => pt.FromYear).Skip(start).Take(vm.limit.Value).ToList();
             }
             else
             {
@@ -201,8 +198,7 @@ namespace Gijgo.AspNetCore.Controllers
             }
             return new JsonResult(new { records, total });
         }
-        #endregion
-
+ 
         public IActionResult Example4()
         {
             return View();
@@ -213,7 +209,7 @@ namespace Gijgo.AspNetCore.Controllers
             return View();
         }
 
-        public JsonResult GetPlayersGrouping(string groupBy, string groupByDirection, int? page, int? limit)
+        public JsonResult GetPlayersGrouping([ModelBinder(typeof(GetPlayersGroupingDtoBinder))] GetPlayersGroupingDto vm) 
         {
             List<Asp.NetCore.Models.DTO.Player> records;
             int total;
@@ -229,9 +225,9 @@ namespace Gijgo.AspNetCore.Controllers
                     OrderNumber = p.OrderNumber
                 });
 
-                if (groupBy == "countryName")
+                if (vm.groupBy == "countryName")
                 {
-                    if (groupByDirection.Trim().ToLower() == "asc")
+                    if (vm.groupByDirection.Trim().ToLower() == "asc")
                     {
                         query = query.OrderBy(q => q.CountryName).ThenBy(q => q.OrderNumber);
                     }
@@ -246,10 +242,10 @@ namespace Gijgo.AspNetCore.Controllers
                 }
 
                 total = query.Count();
-                if (page.HasValue && limit.HasValue)
+                if (vm.page.HasValue && vm.limit.HasValue)
                 {
-                    int start = (page.Value - 1) * limit.Value;
-                    records = query.Skip(start).Take(limit.Value).ToList();
+                    int start = (vm.page.Value - 1) * vm.limit.Value;
+                    records = query.Skip(start).Take(vm.limit.Value).ToList();
                 }
                 else
                 {
@@ -258,7 +254,80 @@ namespace Gijgo.AspNetCore.Controllers
 
             return new JsonResult(new { records, total });           
         }
+        
+        public JsonResult GetPlayersGroupByCountry()
+        {
+            var list = new List<LocationPlayers>();     
+            var countries = _context.Locations.ToList();
+            countries.ForEach(c => {
+                list.Add(new LocationPlayers
+                {
+                    id = c.ID,
+                    @checked = false,
+                    text = c.Name,
+                    hasChildren = HasPlayer(c.ID),
+                    type = "country"
+                });
+            });
 
+            return new JsonResult(list);
+        }
 
+        public JsonResult GetPlayersBy(int CountryId)
+        {
+            var query = _context.Players.Where(c => c.CountryID.Equals(CountryId))
+                .Select(p => new
+                {
+                    id = $"{CountryId}-{p.ID}",
+                    playerId = p.ID,
+                    text = p.Name,
+                    p.PlaceOfBirth,
+                    p.DateOfBirth,
+                    p.CountryID,
+                    CountryName = p.Country.Name,
+                    p.OrderNumber,
+                    type = "player"
+                });
+            return new JsonResult(query.ToList());
+        }
+
+        private bool HasPlayer(int CountryId)
+        {
+            return _context.Players.Any(c => c.CountryID.Equals(CountryId));
+        }
+      
+        public IActionResult PlayerDetail(int PlayerId)
+        {
+            var vm = _context.Players.Where(p => p.ID.Equals(PlayerId))
+                .Select(p => new Asp.NetCore.Models.DTO.Player
+                {
+                    ID = p.ID,
+                    Name = p.Name,
+                    PlaceOfBirth = p.PlaceOfBirth,
+                    DateOfBirth = p.DateOfBirth,
+                    CountryID = p.CountryID,
+                    CountryName = p.Country != null ? p.Country.Name : "",
+                    IsActive = p.IsActive,
+                    OrderNumber = p.OrderNumber
+                }).FirstOrDefault();
+
+            return PartialView(vm);
+        }
+
+        public IActionResult CountryDetail(int CountryId)
+        {
+            var vm = _context.Locations.Where(p => p.ID.Equals(CountryId))
+             .Select(p => new Asp.NET.Examples.Models.Entities.Location
+             {
+                 ID = p.ID,
+                 Name = p.Name,
+                 Checked = p.Checked,
+                 FlagUrl = p.FlagUrl,
+                 Population = p.Population,
+                 OrderNumber = p.OrderNumber
+             }).FirstOrDefault();
+
+            return PartialView(vm);
+        }
     }
 }
